@@ -48,7 +48,12 @@ TIM_HandleTypeDef htim3;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+uint8_t txBuf[64];
+uint8_t reportBuf[64];
+uint8_t buttonFlag = 0;
+uint8_t flagRx = 0;
 
+extern USBD_HandleTypeDef hUsbDeviceFS;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -100,13 +105,31 @@ int main(void)
   MX_USART2_UART_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
+  // Fill buffer with test data
 
+  for (uint8_t i=0; i<64; i++) {
+	txBuf[i] = i;
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	if (flagRx == 1) {
+		// TODO
+	}
+	if (reportBuf[0] == 1) {
+		// TODO
+	} else if (reportBuf[0] == 2) {
+		// TODO
+	}
+	flagRx = 0;
+	if (buttonFlag == 1) {
+		// send data when button pressed
+		// TODO
+		buttonFlag = 0;
+	}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
