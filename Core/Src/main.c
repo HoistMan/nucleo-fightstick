@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "usb_device.h"
+#include "usbd_customhid.h" // probably a bad idea but this is in online tutorial
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -50,7 +51,7 @@ UART_HandleTypeDef huart2;
 /* USER CODE BEGIN PV */
 uint8_t txBuf[64];
 uint8_t reportBuf[64];
-uint8_t buttonFlag = 0;
+volatile uint8_t buttonFlag = 0;
 uint8_t flagRx = 0;
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
@@ -108,23 +109,23 @@ int main(void) {
 	for (uint8_t i = 0; i < 64; i++) {
 		txBuf[i] = i;
 	}
+	buttonFlag = 1;
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
 		if (flagRx == 1) {
-			// TODO
+			if (reportBuf[0] == 1) {
+				HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);	// Nucleo green LED on
+			} else if (reportBuf[0] == 2) {
+				HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);	// Nucleo green LED off
+			}
+			flagRx = 0;
 		}
-		if (reportBuf[0] == 1) {
-			// TODO
-		} else if (reportBuf[0] == 2) {
-			// TODO
-		}
-		flagRx = 0;
 		if (buttonFlag == 1) {
 			// send data when button pressed
-			// TODO
+			USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, txBuf, 64);
 			buttonFlag = 0;
 		}
 		/* USER CODE END WHILE */
@@ -371,7 +372,6 @@ static void MX_GPIO_Init(void) {
 }
 
 /* USER CODE BEGIN 4 */
-
 /* USER CODE END 4 */
 
 /**
