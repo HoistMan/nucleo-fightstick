@@ -503,7 +503,9 @@ uint8_t USBD_CUSTOM_HID_SendReport(USBD_HandleTypeDef *pdev, uint8_t *report,
 		if (hhid->state == CUSTOM_HID_IDLE) {
 			hhid->state = CUSTOM_HID_BUSY;
 			USBD_LL_Transmit(pdev, CUSTOM_HID_EPIN_ADDR, report, len);
+			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);	// Nucleo green LED on
 		} else {
+			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);	// Nucleo green LED on
 			return USBD_BUSY;
 		}
 	}

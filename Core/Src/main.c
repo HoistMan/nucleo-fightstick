@@ -123,15 +123,12 @@ int main(void) {
 			}
 			flagRx = 0;
 		}
-		if (buttonFlag == 1) {
-			// send data when button pressed
-			USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, txBuf, 64);
-			buttonFlag = 0;
-		}
-		/* USER CODE END WHILE */
-
-		/* USER CODE BEGIN 3 */
+		USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, txBuf, 64);
+		HAL_Delay(1000);
 	}
+	/* USER CODE END WHILE */
+
+	/* USER CODE BEGIN 3 */
 	/* USER CODE END 3 */
 }
 

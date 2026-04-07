@@ -69,7 +69,12 @@ void HAL_PCDEx_SetConnectionState(PCD_HandleTypeDef *hpcd, uint8_t state);
 void HAL_PCD_MspInit(PCD_HandleTypeDef *pcdHandle) {
 	if (pcdHandle->Instance == USB) {
 		/* USER CODE BEGIN USB_MspInit 0 */
+		GPIO_InitTypeDef GPIO_InitStruct = { 0 };
+		GPIO_InitStruct.Pin = GPIO_PIN_11;
+		GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+		GPIO_InitStruct.Pull = GPIO_PULLUP;
 
+		// GPIO input, pull DP high
 		/* USER CODE END USB_MspInit 0 */
 		/* Peripheral clock enable */
 		__HAL_RCC_USB_CLK_ENABLE();
@@ -78,6 +83,7 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef *pcdHandle) {
 		HAL_NVIC_SetPriority(USB_LP_CAN_RX0_IRQn, 0, 0);
 		HAL_NVIC_EnableIRQ(USB_LP_CAN_RX0_IRQn);
 		/* USER CODE BEGIN USB_MspInit 1 */
+		// De-assert reset here?
 
 		/* USER CODE END USB_MspInit 1 */
 	}

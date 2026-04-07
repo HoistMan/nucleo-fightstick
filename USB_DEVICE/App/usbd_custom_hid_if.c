@@ -22,7 +22,6 @@
 #include "usbd_custom_hid_if.h"
 
 /* USER CODE BEGIN INCLUDE */
-
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -31,7 +30,9 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+// variables in main used for janky debug
+extern uint8_t flagRx;
+extern uint8_t reportBuf[64];
 /* USER CODE END PV */
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
@@ -91,21 +92,29 @@
 __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DESC_SIZE] __ALIGN_END
 = {
 	/* USER CODE BEGIN 0 */
-	0x06, 0x00, 0xff, // Usage Page (Undefined )
-	0x09, 0x01, // USAGE (Undefined)
-	0xa1, 0x01, // COLLECTION (Application)
-	0x15, 0x00, // LOGICAL_MINIMUM (0)
-	0x26, 0xff, 0x00, // LOGICAL_MAXIMUM (255)
-	0x75, 0x08, // REPORT_SIZE (8)
-	0x95, 0x40, // REPORT_COUNT (64)
-	0x09, 0x01, // USAGE (Undefined)
-	0x81, 0x02, // INPUT (Data, Var, Abs)
-	0x95, 0x40, // REPORT_COUNT (64)
-	0x09, 0x01, // USAGE (Undefined)
-	0x91, 0x02, // OUTPUT (Data, Var, Abs)
-	0x95, 0x01, // REPORT_COUNT (1)
-	0x09, 0x01, // USAGE (Undefined)
-	0xb1, 0x02, // FEATURE (Data, Var, Abs)
+	0x05, 0x01,                    // Usage Page (Generic Desktop)        0
+	0x09, 0x05,                    // Usage (Game Pad)                    2
+	0xa1, 0x01,                    // Collection (Application)            4
+	0x09, 0x39,                    //  Usage (Hat switch)                 6
+	0x15, 0x00,                    //  Logical Minimum (0)                8
+	0x25, 0x07,                    //  Logical Maximum (7)                10
+	0x75, 0x04,                    //  Report Size (4)                    12
+	0x95, 0x01,                    //  Report Count (1)                   14
+	0x81, 0x42,                    //  Input (Data,Var,Abs,Null)          16
+	0x75, 0x04,                    //  Report Size (4)                    18
+	0x95, 0x01,                    //  Report Count (1)                   20
+	0x81, 0x03,                    //  Input (Cnst,Var,Abs)               22
+	0x05, 0x09,                    //  Usage Page (Button)                24
+	0x19, 0x01,                    //  Usage Minimum (1)                  26
+	0x29, 0x0b,                    //  Usage Maximum (11)                 28
+	0x15, 0x00,                    //  Logical Minimum (0)                30
+	0x25, 0x01,                    //  Logical Maximum (1)                32
+	0x75, 0x01,                    //  Report Size (1)                    34
+	0x95, 0x0b,                    //  Report Count (11)                  36
+	0x81, 0x02,                    //  Input (Data,Var,Abs)               38
+	0x75, 0x05,                    //  Report Size (5)                    40
+	0x95, 0x01,                    //  Report Count (1)                   42
+	0x81, 0x03,                    //  Input (Cnst,Var,Abs)               44
 	/* USER CODE END 0 */
 	0xC0 /* END_COLLECTION */
 };
@@ -182,6 +191,9 @@ static int8_t CUSTOM_HID_DeInit_FS(void) {
  */
 static int8_t CUSTOM_HID_OutEvent_FS(uint8_t event_idx, uint8_t state) {
 	/* USER CODE BEGIN 6 */
+	reportBuf[0] = event_idx;
+	reportBuf[1] = state;
+	flagRx = 1;
 	return (USBD_OK);
 	/* USER CODE END 6 */
 }
